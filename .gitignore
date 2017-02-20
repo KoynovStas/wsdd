@@ -1,0 +1,39 @@
+# Object files
+*.o
+*.o.*
+*.ko
+*.obj
+*.elf
+
+
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+
+
+# Shared objects
+*.so
+*.so.*
+
+
+
+# Binary files
+wsdd
+wsdd_debug
+
+
+
+# Temp files
+*.*~
+*.pid
+*.log
+*.depend
+
+
+
+# Files that we don't want to ignore
+!.gitignore
