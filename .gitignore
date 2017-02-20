@@ -27,6 +27,11 @@ wsdd_debug
 
 
 
+# SDK files
+SDK/
+gsoap-2.8/
+
+
 # Temp files
 *.*~
 *.pid
