@@ -124,6 +124,12 @@ clean:
 
 
 
+.PHONY: distclean
+distclean: clean
+	-@rm -f -d -R SDK
+	-@rm -f -d -R gsoap-2.8
+
+
 
 .depend: cmd  = echo "  [depend]  $(var)" &&
 .depend: cmd += $(GCC) $(CFLAGS) -MT ".depend $(basename $(var)).o $(basename $(var))_debug.o"  -MM $(var) >> .depend;
@@ -193,9 +199,10 @@ endef
 help:
 	@echo "make [command]"
 	@echo "command is:"
-	@echo "   all     -  build daemon in release and debug mode"
-	@echo "   debug   -  build in debug mode (#define DEBUG 1)"
-	@echo "   release -  build in release mode (strip)"
-	@echo "   clean   -  remove all generated files"
-	@echo "   help    -  this help"
+	@echo "   all       -  build daemon in release and debug mode"
+	@echo "   debug     -  build in debug mode (#define DEBUG 1)"
+	@echo "   release   -  build in release mode (strip)"
+	@echo "   clean     -  remove all generated files"
+	@echo "   distclean -  clean + remove all SDK files"
+	@echo "   help      -  this help"
 
