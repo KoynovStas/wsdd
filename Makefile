@@ -9,21 +9,30 @@ DAEMON_NO_CLOSE_STDIO = 0
 
 
 
-COMMON_DIR = ./src
 
-CFLAGS     = -DDAEMON_NAME='"$(DAEMON_NAME)"'
-CFLAGS    += -DDAEMON_MAJOR_VERSION=$(DAEMON_MAJOR_VERSION)
-CFLAGS    += -DDAEMON_MINOR_VERSION=$(DAEMON_MINOR_VERSION)
-CFLAGS    += -DDAEMON_PATCH_VERSION=$(DAEMON_PATCH_VERSION)
-CFLAGS    += -DDAEMON_PID_FILE_NAME='"$(DAEMON_PID_FILE_NAME)"'
-CFLAGS    += -DDAEMON_LOG_FILE_NAME='"$(DAEMON_LOG_FILE_NAME)"'
-CFLAGS    += -DDAEMON_NO_CHDIR=$(DAEMON_NO_CHDIR)
-CFLAGS    += -DDAEMON_NO_CLOSE_STDIO=$(DAEMON_NO_CLOSE_STDIO)
+GSOAP_DIR         = ./gsoap-2.8/gsoap
+GSOAP_PLUGIN_DIR  = $(GSOAP_DIR)/plugin
+GSOAP_IMPORT_DIR  = $(GSOAP_DIR)/import
 
-CFLAGS    += -I$(COMMON_DIR)
-CFLAGS    += -O2  -Wall  -pipe
+SOAPCPP2          = $(GSOAP_DIR)/src/soapcpp2
+WSDL2H            = $(GSOAP_DIR)/wsdl/wsdl2h
 
-GCC        =  gcc
+
+COMMON_DIR        = ./src
+
+CFLAGS            = -DDAEMON_NAME='"$(DAEMON_NAME)"'
+CFLAGS           += -DDAEMON_MAJOR_VERSION=$(DAEMON_MAJOR_VERSION)
+CFLAGS           += -DDAEMON_MINOR_VERSION=$(DAEMON_MINOR_VERSION)
+CFLAGS           += -DDAEMON_PATCH_VERSION=$(DAEMON_PATCH_VERSION)
+CFLAGS           += -DDAEMON_PID_FILE_NAME='"$(DAEMON_PID_FILE_NAME)"'
+CFLAGS           += -DDAEMON_LOG_FILE_NAME='"$(DAEMON_LOG_FILE_NAME)"'
+CFLAGS           += -DDAEMON_NO_CHDIR=$(DAEMON_NO_CHDIR)
+CFLAGS           += -DDAEMON_NO_CLOSE_STDIO=$(DAEMON_NO_CLOSE_STDIO)
+
+CFLAGS           += -I$(COMMON_DIR)
+CFLAGS           += -O2  -Wall  -pipe
+
+GCC              =  gcc
 
 
 
@@ -33,7 +42,6 @@ GCC        =  gcc
 # For other file types write a template rule for build, see below.
 SOURCES  = $(COMMON_DIR)/$(DAEMON_NAME).c         \
            $(COMMON_DIR)/daemon.c
-
 
 
 
@@ -49,7 +57,7 @@ DEBUG_OBJECTS := $(patsubst %.o, %_debug.o, $(OBJECTS) )
 
 
 .PHONY: all
-all: debug release
+all: gsoap debug release
 
 
 
@@ -130,6 +138,13 @@ include $(wildcard .depend)
 
 
 
+.PHONY: gsoap
+gsoap:
+	@$(build_gsoap)
+
+
+
+
 # Common commands
 BUILD_ECHO = echo "\n  [build]  $@:"
 
@@ -140,11 +155,37 @@ define build_object
 endef
 
 
+
 define build_bin
     @$(BUILD_ECHO)
     $(GCC)  $1 -o $@  $(CFLAGS)
     @echo "\n---- Compiled $@ ver $(DAEMON_MAJOR_VERSION).$(DAEMON_MINOR_VERSION).$(DAEMON_PATCH_VERSION) ----\n"
 endef
+
+
+
+define build_gsoap
+
+    # get archive
+    if [ ! -f SDK/gsoap_2.8.43.zip ]; then \
+        mkdir -p SDK; \
+        wget -O ./SDK/gsoap_2.8.43.zip "https://vorboss.dl.sourceforge.net/project/gsoap2/gsoap-2.8/gsoap_2.8.43.zip"; \
+    fi
+
+    # unzip
+    if [ ! -f gsoap-2.8/README.txt ]; then \
+         unzip SDK/gsoap_2.8.43.zip; \
+    fi
+
+    # build
+    if [ ! -f $(SOAPCPP2) ] || [ ! -f $(WSDL2H) ]; then \
+         cd gsoap-2.8; \
+         ./configure; \
+         make; \
+         cd ..;\
+    fi
+endef
+
 
 
 
