@@ -57,7 +57,7 @@ DEBUG_OBJECTS := $(patsubst %.o, %_debug.o, $(OBJECTS) )
 
 
 .PHONY: all
-all: gsoap debug release
+all: generate debug release
 
 
 
@@ -120,6 +120,7 @@ clean:
 	-@rm -f $(OBJECTS)
 	-@rm -f $(DEBUG_OBJECTS)
 	-@rm -f .depend
+	-@rm -f -d -R generated
 	-@rm -f *.*~
 
 
@@ -144,9 +145,20 @@ include $(wildcard .depend)
 
 
 
-.PHONY: gsoap
-gsoap:
+generated/wsdd.h:
 	@$(build_gsoap)
+	@mkdir -p generated
+	$(WSDL2H) -cg -t $(GSOAP_DIR)/WS/typemap.dat  -o $@  wsdl/remotediscovery.wsdl
+
+
+
+generated/soapC.c: generated/wsdd.h
+	$(SOAPCPP2) -L -x -c -2 -d generated -I$(GSOAP_DIR):$(GSOAP_IMPORT_DIR) $<
+
+
+
+.PHONY: generate
+generate: generated/soapC.c
 
 
 
