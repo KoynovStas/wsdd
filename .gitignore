@@ -30,6 +30,7 @@ wsdd_debug
 # SDK files
 SDK/
 gsoap-2.8/
+generated/
 
 
 # Temp files
