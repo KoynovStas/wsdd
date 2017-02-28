@@ -41,6 +41,8 @@ static const char *help_str =
         "       --endpoint [uuid]      Set UUID for WS-Discovery (default generated a random)\n"
         "       --type     [type]      Set Type of ONVIF service\n"
         "       --scope    [scopes]    Set Scope(s) of ONVIF service\n"
+        "       --xaddr    [URL]       Set address (or template URL) of ONVIF service [in template mode %s "
+        "                              will be changed to IP of interfasec (see opt if_name)]\n"
         "  -v   --version              Display daemon version information\n"
         "  -h,  --help                 Display this information\n\n";
 
@@ -63,6 +65,7 @@ static const struct option long_opts[] =
     { "endpoint",     required_argument, NULL,  6  },
     { "type",         required_argument, NULL,  7  },
     { "scope",        required_argument, NULL,  8  },
+    { "xaddr",        required_argument, NULL,  9  },
 
     { NULL,           no_argument,       NULL,  0  }
 };
@@ -169,6 +172,7 @@ void processing_cmd(int argc, char *argv[])
                         daemon_info.log_file = optarg;
                         break;
 
+
             case 5:     // --if_name
                         wsdd_param.if_name = optarg;
                         break;
@@ -183,6 +187,10 @@ void processing_cmd(int argc, char *argv[])
 
             case 8:     // --scope
                         wsdd_param.scope = optarg;
+                        break;
+
+            case 9:     // --xaddr
+                        wsdd_param.xaddr = optarg;
                         break;
 
             default:
@@ -220,7 +228,6 @@ void init(void *data)
     }
 
 
-
     // Join the multicast group 239.255.255.250 on the local interface
     // interface. Note that this IP_ADD_MEMBERSHIP option must be
     // called for each local interface over which the multicast
@@ -236,6 +243,8 @@ void init(void *data)
     {
         daemon_error_exit("Cant adding multicast group error: %m\n");
     }
+
+
 
 }
 

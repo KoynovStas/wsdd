@@ -19,8 +19,8 @@ struct wsdd_param_t
     const char* if_name;        // bind this interface for Multicast
     const char* endpoint;       // my address - where they can find me for WS-Discovery
     const char* type;           // type of ONVIF service
-    const char* scope;
-    const char* xaddr;
+    const char* scope;          // scope(s) of ONVIF service
+    const char* xaddr;          // address of ONVIF service
 
     int         metadata_ver;
 };
