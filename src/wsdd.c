@@ -7,9 +7,13 @@
 #include <getopt.h>
 
 
+// my headers
 #include "daemon.h"
 #include "net_utils.h"
+#include "wsdd_param.h"
 
+
+// gsoap headers
 #include "wsdd.nsmap"
 #include "wsddapi.h"
 
@@ -172,7 +176,7 @@ void init(void *data)
     // init gsoap server for WS-Discovery service
     soap_srv = soap_new1(SOAP_IO_UDP);
 
-    in_addr_t addr               = inet_addr("239.255.255.250");
+    in_addr_t addr               = inet_addr(WSDD_MULTICAST_IP);
     soap_srv->ipv4_multicast_if  = (char *)&addr;  // see setsockopt IPPROTO_IP IP_MULTICAST_IF
     soap_srv->ipv6_multicast_if  = addr;           // multicast sin6_scope_id
     soap_srv->ipv4_multicast_ttl = 1;              // see setsockopt IPPROTO_IP, IP_MULTICAST_TTL
@@ -180,7 +184,7 @@ void init(void *data)
     soap_srv->bind_flags         = SO_REUSEADDR;
 
 
-    if(!soap_valid_socket(soap_bind(soap_srv, NULL, 3702, 1000)))
+    if(!soap_valid_socket(soap_bind(soap_srv, NULL, WSDD_SERVER_PORT, 100)))
     {
         soap_print_fault(soap_srv, stderr);
         exit(EXIT_FAILURE);
@@ -193,7 +197,7 @@ void init(void *data)
     // called for each local interface over which the multicast
     // datagrams are to be received.
     struct ip_mreq mcast;
-    mcast.imr_multiaddr.s_addr = inet_addr("239.255.255.250");
+    mcast.imr_multiaddr.s_addr = inet_addr(WSDD_MULTICAST_IP);
     if( get_addr_of_if("eth1", AF_INET, &mcast.imr_interface) != 0 )
     {
         daemon_error_exit("Cant get addr for interface error: %m\n");
