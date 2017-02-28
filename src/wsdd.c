@@ -8,6 +8,7 @@
 
 
 #include "daemon.h"
+#include "net_utils.h"
 
 #include "wsdd.nsmap"
 #include "wsddapi.h"
@@ -168,6 +169,7 @@ void init(void *data)
 
 
 
+    // init gsoap server for WS-Discovery service
     soap_srv = soap_new1(SOAP_IO_UDP);
 
     in_addr_t addr               = inet_addr("239.255.255.250");
@@ -182,6 +184,24 @@ void init(void *data)
     {
         soap_print_fault(soap_srv, stderr);
         exit(EXIT_FAILURE);
+    }
+
+
+
+    // Join the multicast group 239.255.255.250 on the local interface
+    // interface. Note that this IP_ADD_MEMBERSHIP option must be
+    // called for each local interface over which the multicast
+    // datagrams are to be received.
+    struct ip_mreq mcast;
+    mcast.imr_multiaddr.s_addr = inet_addr("239.255.255.250");
+    if( get_addr_of_if("eth1", AF_INET, &mcast.imr_interface) != 0 )
+    {
+        daemon_error_exit("Cant get addr for interface error: %m\n");
+    }
+
+    if(setsockopt(soap_srv->master, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&mcast, sizeof(mcast)) < 0)
+    {
+        daemon_error_exit("Cant adding multicast group error: %m\n");
     }
 
 }
