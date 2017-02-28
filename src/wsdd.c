@@ -40,6 +40,7 @@ static const char *help_str =
         "       --if_name  [interface] Set Network Interface for add to multicast group\n"
         "       --endpoint [uuid]      Set UUID for WS-Discovery (default generated a random)\n"
         "       --type     [type]      Set Type of ONVIF service\n"
+        "       --scope    [scopes]    Set Scope(s) of ONVIF service\n"
         "  -v   --version              Display daemon version information\n"
         "  -h,  --help                 Display this information\n\n";
 
@@ -61,6 +62,7 @@ static const struct option long_opts[] =
     { "if_name",      required_argument, NULL,  5  },
     { "endpoint",     required_argument, NULL,  6  },
     { "type",         required_argument, NULL,  7  },
+    { "scope",        required_argument, NULL,  8  },
 
     { NULL,           no_argument,       NULL,  0  }
 };
@@ -177,6 +179,10 @@ void processing_cmd(int argc, char *argv[])
 
             case 7:     // --type
                         wsdd_param.type = optarg;
+                        break;
+
+            case 8:     // --scope
+                        wsdd_param.scope = optarg;
                         break;
 
             default:
