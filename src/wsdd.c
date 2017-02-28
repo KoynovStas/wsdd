@@ -10,6 +10,9 @@
 #include "daemon.h"
 
 
+#include "wsddapi.h"
+
+
 
 
 
