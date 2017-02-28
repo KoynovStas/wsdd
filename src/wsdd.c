@@ -115,6 +115,23 @@ void init_signals(void)
 
 
 
+void check_param()
+{
+    if(!wsdd_param.if_name)
+        daemon_error_exit("Network interface not set (see opt --if_name)\n");
+
+    if(!wsdd_param.type)
+        daemon_error_exit("Type of ONVIF service not set (see opt --type)\n");
+
+    if(!wsdd_param.scope)
+        daemon_error_exit("Scope of ONVIF service not set (see opt --scope)\n");
+
+    if(!wsdd_param.xaddr)
+        daemon_error_exit("URL of ONVIF service not set (see opt --xaddr)\n");
+}
+
+
+
 void processing_cmd(int argc, char *argv[])
 {
 
@@ -208,6 +225,8 @@ void init(void *data)
 {
     init_signals();
 
+
+    check_param();
 
 
     // init gsoap server for WS-Discovery service
