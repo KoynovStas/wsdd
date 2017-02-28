@@ -37,6 +37,7 @@ static const char *help_str =
         "       --no_close             Don't close standart IO files\n"
         "       --pid_file [value]     Set pid file name\n"
         "       --log_file [value]     Set log file name\n"
+        "       --if_name  [interface] Set Network Interface for add to multicast group\n"
         "  -v   --version              Display daemon version information\n"
         "  -h,  --help                 Display this information\n\n";
 
@@ -54,13 +55,19 @@ static const struct option long_opts[] =
     { "pid_file",     required_argument, NULL,  3  },
     { "log_file",     required_argument, NULL,  4  },
 
+    // wsdd param
+    { "if_name",      required_argument, NULL,  5  },
+
     { NULL,           no_argument,       NULL,  0  }
 };
 
 
 
 
-struct soap* soap_srv;
+
+struct soap*         soap_srv;
+struct wsdd_param_t  wsdd_param;
+
 
 
 
@@ -156,6 +163,10 @@ void processing_cmd(int argc, char *argv[])
                         daemon_info.log_file = optarg;
                         break;
 
+            case 5:     // --if_name
+                        wsdd_param.if_name = optarg;
+                        break;
+
             default:
                   break;
         }
@@ -198,7 +209,7 @@ void init(void *data)
     // datagrams are to be received.
     struct ip_mreq mcast;
     mcast.imr_multiaddr.s_addr = inet_addr(WSDD_MULTICAST_IP);
-    if( get_addr_of_if("eth1", AF_INET, &mcast.imr_interface) != 0 )
+    if( get_addr_of_if(wsdd_param.if_name, AF_INET, &mcast.imr_interface) != 0 )
     {
         daemon_error_exit("Cant get addr for interface error: %m\n");
     }
