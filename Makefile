@@ -14,11 +14,14 @@ GSOAP_DIR         = ./gsoap-2.8/gsoap
 GSOAP_PLUGIN_DIR  = $(GSOAP_DIR)/plugin
 GSOAP_IMPORT_DIR  = $(GSOAP_DIR)/import
 
+
 SOAPCPP2          = $(GSOAP_DIR)/src/soapcpp2
 WSDL2H            = $(GSOAP_DIR)/wsdl/wsdl2h
 
 
 COMMON_DIR        = ./src
+GENERATED_DIR     = ./generated
+
 
 CFLAGS            = -DDAEMON_NAME='"$(DAEMON_NAME)"'
 CFLAGS           += -DDAEMON_MAJOR_VERSION=$(DAEMON_MAJOR_VERSION)
@@ -30,6 +33,8 @@ CFLAGS           += -DDAEMON_NO_CHDIR=$(DAEMON_NO_CHDIR)
 CFLAGS           += -DDAEMON_NO_CLOSE_STDIO=$(DAEMON_NO_CLOSE_STDIO)
 
 CFLAGS           += -I$(COMMON_DIR)
+CFLAGS           += -I$(GENERATED_DIR)
+CFLAGS           += -I$(GSOAP_DIR) -I$(GSOAP_PLUGIN_DIR) -I$(GSOAP_IMPORT_DIR)
 CFLAGS           += -O2  -Wall  -pipe
 
 GCC              =  gcc
@@ -120,7 +125,7 @@ clean:
 	-@rm -f $(OBJECTS)
 	-@rm -f $(DEBUG_OBJECTS)
 	-@rm -f .depend
-	-@rm -f -d -R generated
+	-@rm -f -d -R $(GENERATED_DIR)
 	-@rm -f *.*~
 
 
@@ -147,18 +152,18 @@ include $(wildcard .depend)
 
 generated/wsdd.h:
 	@$(build_gsoap)
-	@mkdir -p generated
+	@mkdir -p $(GENERATED_DIR)
 	$(WSDL2H) -cg -t $(GSOAP_DIR)/WS/typemap.dat  -o $@  wsdl/remotediscovery.wsdl
 
 
 
-generated/soapC.c: generated/wsdd.h
-	$(SOAPCPP2) -L -x -c -2 -d generated -I$(GSOAP_DIR):$(GSOAP_IMPORT_DIR) $<
+generated/soapC.c: $(GENERATED_DIR)/wsdd.h
+	$(SOAPCPP2) -L -x -c -2 -d $(GENERATED_DIR) -I$(GSOAP_DIR):$(GSOAP_IMPORT_DIR) $<
 
 
 
 .PHONY: generate
-generate: generated/soapC.c
+generate: $(GENERATED_DIR)/soapC.c
 
 
 
