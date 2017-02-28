@@ -45,8 +45,13 @@ GCC              =  gcc
 # Add your source files to the list.
 # Supported *.c  *.cpp  *.S files.
 # For other file types write a template rule for build, see below.
-SOURCES  = $(COMMON_DIR)/$(DAEMON_NAME).c         \
-           $(COMMON_DIR)/daemon.c
+SOURCES  = $(COMMON_DIR)/$(DAEMON_NAME).c   \
+           $(COMMON_DIR)/daemon.c           \
+           $(GENERATED_DIR)/soapC.c         \
+           $(GENERATED_DIR)/soapClient.c    \
+           $(GSOAP_DIR)/stdsoap2.c          \
+           $(GSOAP_PLUGIN_DIR)/wsaapi.c     \
+           $(GSOAP_PLUGIN_DIR)/wsddapi.c
 
 
 

@@ -9,7 +9,7 @@
 
 #include "daemon.h"
 
-
+#include "wsdd.nsmap"
 #include "wsddapi.h"
 
 
@@ -52,6 +52,10 @@ static const struct option long_opts[] =
     { NULL,           no_argument,       NULL,  0  }
 };
 
+
+
+
+struct soap* soap_srv;
 
 
 
@@ -163,7 +167,23 @@ void init(void *data)
     init_signals();
 
 
-    //Here is your code to initialize
+
+    soap_srv = soap_new1(SOAP_IO_UDP);
+
+    in_addr_t addr               = inet_addr("239.255.255.250");
+    soap_srv->ipv4_multicast_if  = (char *)&addr;  // see setsockopt IPPROTO_IP IP_MULTICAST_IF
+    soap_srv->ipv6_multicast_if  = addr;           // multicast sin6_scope_id
+    soap_srv->ipv4_multicast_ttl = 1;              // see setsockopt IPPROTO_IP, IP_MULTICAST_TTL
+    soap_srv->connect_flags      = SO_BROADCAST;   // for UDP multicast
+    soap_srv->bind_flags         = SO_REUSEADDR;
+
+
+    if(!soap_valid_socket(soap_bind(soap_srv, NULL, 3702, 1000)))
+    {
+        soap_print_fault(soap_srv, stderr);
+        exit(EXIT_FAILURE);
+    }
+
 }
 
 
