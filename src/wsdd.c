@@ -166,6 +166,27 @@ void get_xaddr(void)
 
 
 
+void get_endpoint(void)
+{
+    static char tmp[48];      //UUID "urn:uuid:xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+
+    if(wsdd_param.endpoint)
+        return; // good job user set endpoint from cmd
+
+
+    char *random_UUID = soap_wsa_rand_uuid(soap_srv);
+
+    if(!random_UUID)
+        daemon_error_exit("Error: cant get random UUID\n");
+
+
+    snprintf(tmp, sizeof(tmp), "%s", random_UUID);
+
+    wsdd_param.endpoint = tmp;
+}
+
+
+
 void processing_cmd(int argc, char *argv[])
 {
 
@@ -265,7 +286,7 @@ void init(void *data)
 
 
     check_param();
-    get_xaddr();
+
 
     // init gsoap server for WS-Discovery service
     soap_srv = soap_new1(SOAP_IO_UDP);
@@ -302,7 +323,9 @@ void init(void *data)
     }
 
 
-
+    // init static wsdd_param
+    get_xaddr();
+    get_endpoint();
 }
 
 
