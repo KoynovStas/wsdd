@@ -1,6 +1,8 @@
 #ifndef WSDD_PARAM_H
 #define WSDD_PARAM_H
 
+#include <stdint.h>
+
 
 
 
@@ -22,7 +24,7 @@ struct wsdd_param_t
     const char* scope;          // scope(s) of ONVIF service
     const char* xaddr;          // address of ONVIF service
 
-    int         metadata_ver;
+    uint32_t    metadata_ver;
 };
 
 

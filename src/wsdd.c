@@ -43,6 +43,7 @@ static const char *help_str =
         "       --scope    [scopes]    Set Scope(s) of ONVIF service\n"
         "       --xaddr    [URL]       Set address (or template URL) of ONVIF service [in template mode %s "
         "                              will be changed to IP of interfasec (see opt if_name)]\n"
+        "       --metdata_ver [ver]    Set Meta data version of ONVIF service (default = 0)\n"
         "  -v   --version              Display daemon version information\n"
         "  -h,  --help                 Display this information\n\n";
 
@@ -66,6 +67,7 @@ static const struct option long_opts[] =
     { "type",         required_argument, NULL,  7  },
     { "scope",        required_argument, NULL,  8  },
     { "xaddr",        required_argument, NULL,  9  },
+    { "metdata_ver",  required_argument, NULL,  10 },
 
     { NULL,           no_argument,       NULL,  0  }
 };
@@ -240,6 +242,10 @@ void processing_cmd(int argc, char *argv[])
 
             case 9:     // --xaddr
                         wsdd_param.xaddr = optarg;
+                        break;
+
+            case 10:     // --metdata_ver
+                        wsdd_param.metadata_ver = strtoul(optarg, NULL, 10);;
                         break;
 
             default:
