@@ -85,13 +85,11 @@ struct wsdd_param_t  wsdd_param;
 
 void daemon_exit_handler(int sig)
 {
-
     //Here we release resources
-
 
     unlink(daemon_info.pid_file);
 
-    _exit(EXIT_FAILURE);
+    daemon_info.terminated = 1;    //set flag terminate main loop
 }
 
 
@@ -375,21 +373,28 @@ void send_bye(void)
 
 int main(int argc, char *argv[])
 {
-
     processing_cmd(argc, argv);
     daemonize2(init, NULL);
+
+
+    send_hello();
+    soap_wsdd_listen(soap_srv, 1);
 
 
 
     while( !daemon_info.terminated )
     {
-
-        // Here а routine of daemon
-
-        printf("%s: daemon is run\n", DAEMON_NAME);
-        sleep(10);
+        if(soap_wsdd_listen(soap_srv, 1))
+            soap_print_fault(soap_srv, stderr); // report the problem
     }
 
+
+
+    send_bye();
+    soap_wsdd_listen(soap_srv, 1);
+
+    soap_destroy(soap_srv);
+    soap_end(soap_srv);
 
 
     return EXIT_SUCCESS; // good job (we interrupted (finished) main loop)
