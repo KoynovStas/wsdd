@@ -72,3 +72,27 @@ void send_hello(struct soap* soap)
     if(res != SOAP_OK)
         soap_print_fault(soap, stderr);
 }
+
+
+
+void send_bye(struct soap* soap)
+{
+    struct wsdd_param_t *wsdd_parm = (struct wsdd_param_t *)soap->user;
+
+    if(!wsdd_parm)
+        return;
+
+    int res = soap_wsdd_Bye(soap,
+                            SOAP_WSDD_ADHOC,             // mode
+                            SOAP_WSDD_TS_ADDRESS,        // address of TS
+                            soap_wsa_rand_uuid(soap),    // message ID
+                            wsdd_parm->endpoint,
+                            wsdd_parm->type,
+                            wsdd_parm->scope,
+                            NULL,
+                            wsdd_parm->xaddr,
+                            wsdd_parm->metadata_ver);
+
+    if(res != SOAP_OK)
+        soap_print_fault(soap, stderr);
+}
