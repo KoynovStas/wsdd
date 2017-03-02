@@ -306,6 +306,10 @@ void init(void *data)
     }
 
 
+    soap_srv->user = &wsdd_param;  // set our data for handlers
+
+
+
     // Join the multicast group 239.255.255.250 on the local interface
     // interface. Note that this IP_ADD_MEMBERSHIP option must be
     // called for each local interface over which the multicast
