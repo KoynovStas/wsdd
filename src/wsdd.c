@@ -174,7 +174,7 @@ void get_endpoint(void)
         return; // good job user set endpoint from cmd
 
 
-    char *random_UUID = soap_wsa_rand_uuid(soap_srv);
+    const char *random_UUID = soap_wsa_rand_uuid(soap_srv);
 
     if(!random_UUID)
         daemon_error_exit("Error: cant get random UUID\n");
