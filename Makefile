@@ -198,14 +198,15 @@ endef
 define build_gsoap
 
     # get archive
-    if [ ! -f SDK/gsoap_2.8.43.zip ]; then \
+    if [ ! -f SDK/gsoap.zip ]; then \
         mkdir -p SDK; \
-        wget -O ./SDK/gsoap_2.8.43.zip "https://vorboss.dl.sourceforge.net/project/gsoap2/gsoap-2.8/gsoap_2.8.43.zip"; \
+        wget -O ./SDK/gsoap.zip.tmp "https://vorboss.dl.sourceforge.net/project/gsoap2/gsoap-2.8/gsoap_2.8.43.zip"; \
+        mv ./SDK/gsoap.zip.tmp ./SDK/gsoap.zip; \
     fi
 
     # unzip
     if [ ! -f gsoap-2.8/README.txt ]; then \
-         unzip SDK/gsoap_2.8.43.zip; \
+         unzip ./SDK/gsoap.zip; \
     fi
 
     # build
