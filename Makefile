@@ -166,7 +166,7 @@ generated/wsdd.h:
 
 
 generated/soapC.c: $(GENERATED_DIR)/wsdd.h
-	$(SOAPCPP2) -L -x -c -2 -d $(GENERATED_DIR) -I$(GSOAP_DIR):$(GSOAP_IMPORT_DIR) $<
+	$(SOAPCPP2) -C -L -x -c -2 -d $(GENERATED_DIR) -I$(GSOAP_DIR):$(GSOAP_IMPORT_DIR) $<
 
 
 
