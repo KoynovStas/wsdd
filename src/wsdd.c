@@ -115,6 +115,51 @@ struct wsdd_param_t  wsdd_param;
 
 
 
+void send_hello(void)
+{
+    int res = soap_wsdd_Hello(soap_srv,
+                              SOAP_WSDD_ADHOC,             // mode
+                              SOAP_WSDD_TS_ADDRESS,        // address of TS
+                              soap_wsa_rand_uuid(soap_srv),// message ID
+                              NULL,
+                              wsdd_param.endpoint,
+                              wsdd_param.type,
+                              wsdd_param.scope,
+                              NULL,
+                              wsdd_param.xaddr,
+                              wsdd_param.metadata_ver);
+
+
+    if(res == SOAP_OK)
+        soap_wsdd_listen(soap_srv, 1);
+    else
+        soap_print_fault(soap_srv, stderr);
+}
+
+
+
+void send_bye(void)
+{
+    int res = soap_wsdd_Bye(soap_srv,
+                            SOAP_WSDD_ADHOC,             // mode
+                            SOAP_WSDD_TS_ADDRESS,        // address of TS
+                            soap_wsa_rand_uuid(soap_srv),// message ID
+                            wsdd_param.endpoint,
+                            wsdd_param.type,
+                            wsdd_param.scope,
+                            NULL,
+                            wsdd_param.xaddr,
+                            wsdd_param.metadata_ver);
+
+
+    if(res == SOAP_OK)
+        soap_wsdd_listen(soap_srv, 1);
+    else
+        soap_print_fault(soap_srv, stderr);
+}
+
+
+
 void daemon_exit_handler(int sig)
 {
     //Here we release resources
@@ -374,45 +419,6 @@ void init(void *data)
 
 
 
-void send_hello(void)
-{
-    int res = soap_wsdd_Hello(soap_srv,
-                              SOAP_WSDD_ADHOC,             // mode
-                              SOAP_WSDD_TS_ADDRESS,        // address of TS
-                              soap_wsa_rand_uuid(soap_srv),// message ID
-                              NULL,
-                              wsdd_param.endpoint,
-                              wsdd_param.type,
-                              wsdd_param.scope,
-                              NULL,
-                              wsdd_param.xaddr,
-                              wsdd_param.metadata_ver);
-
-    if(res != SOAP_OK)
-        soap_print_fault(soap_srv, stderr);
-}
-
-
-
-void send_bye(void)
-{
-    int res = soap_wsdd_Bye(soap_srv,
-                            SOAP_WSDD_ADHOC,             // mode
-                            SOAP_WSDD_TS_ADDRESS,        // address of TS
-                            soap_wsa_rand_uuid(soap_srv),// message ID
-                            wsdd_param.endpoint,
-                            wsdd_param.type,
-                            wsdd_param.scope,
-                            NULL,
-                            wsdd_param.xaddr,
-                            wsdd_param.metadata_ver);
-
-    if(res != SOAP_OK)
-        soap_print_fault(soap_srv, stderr);
-}
-
-
-
 int main(int argc, char *argv[])
 {
     processing_cmd(argc, argv);
@@ -420,7 +426,6 @@ int main(int argc, char *argv[])
 
 
     send_hello();
-    soap_wsdd_listen(soap_srv, 1);
 
 
 
@@ -433,7 +438,6 @@ int main(int argc, char *argv[])
 
 
     send_bye();
-    soap_wsdd_listen(soap_srv, 1);
 
     soap_destroy(soap_srv);
     soap_end(soap_srv);
