@@ -42,6 +42,13 @@ GCC              =  gcc
 
 
 
+SOAP_SRC = $(GSOAP_DIR)/stdsoap2.c         \
+           $(GSOAP_PLUGIN_DIR)/wsaapi.c    \
+           $(GSOAP_PLUGIN_DIR)/wsddapi.c   \
+           $(GENERATED_DIR)/soapClient.c
+
+
+
 # Add your source files to the list.
 # Supported *.c  *.cpp  *.S files.
 # For other file types write a template rule for build, see below.
@@ -51,10 +58,8 @@ SOURCES  = $(COMMON_DIR)/$(DAEMON_NAME).c   \
            $(COMMON_DIR)/file_utils.c       \
            $(COMMON_DIR)/client_events.c    \
            $(GENERATED_DIR)/soapC.c         \
-           $(GENERATED_DIR)/soapClient.c    \
-           $(GSOAP_DIR)/stdsoap2.c          \
-           $(GSOAP_PLUGIN_DIR)/wsaapi.c     \
-           $(GSOAP_PLUGIN_DIR)/wsddapi.c
+           $(SOAP_SRC)
+
 
 
 
@@ -64,13 +69,15 @@ OBJECTS  := $(patsubst %.cpp,%.o, $(OBJECTS) )
 OBJECTS  := $(patsubst %.S,  %.o, $(OBJECTS) )
 
 
-DEBUG_OBJECTS := $(patsubst %.o, %_debug.o, $(OBJECTS) )
+DEBUG_SUFFIX   = debug
+
+DEBUG_OBJECTS := $(patsubst %.o, %_$(DEBUG_SUFFIX).o, $(OBJECTS) )
 
 
 
 
 .PHONY: all
-all: generate debug release
+all: debug release
 
 
 
@@ -83,7 +90,7 @@ release: $(DAEMON_NAME)
 .PHONY: debug
 debug: DAEMON_NO_CLOSE_STDIO = 1
 debug: CFLAGS := -DDEBUG  -g  $(CFLAGS)
-debug: $(DAEMON_NAME)_debug
+debug: $(DAEMON_NAME)_$(DEBUG_SUFFIX)
 
 
 
@@ -93,7 +100,7 @@ $(DAEMON_NAME): .depend $(OBJECTS)
 
 
 # debug
-$(DAEMON_NAME)_debug: .depend $(DEBUG_OBJECTS)
+$(DAEMON_NAME)_$(DEBUG_SUFFIX): .depend $(DEBUG_OBJECTS)
 	$(call build_bin, $(DEBUG_OBJECTS))
 
 
@@ -113,15 +120,15 @@ $(DAEMON_NAME)_debug: .depend $(DEBUG_OBJECTS)
 
 
 # Build debug objects
-%_debug.o: %.c
+%_$(DEBUG_SUFFIX).o: %.c
 	$(build_object)
 
 
-%_debug.o: %.cpp
+%_$(DEBUG_SUFFIX).o: %.cpp
 	$(build_object)
 
 
-%_debug.o: %.S
+%_$(DEBUG_SUFFIX).o: %.S
 	$(build_object)
 
 
@@ -129,7 +136,7 @@ $(DAEMON_NAME)_debug: .depend $(DEBUG_OBJECTS)
 .PHONY: clean
 clean:
 	-@rm -f $(DAEMON_NAME)
-	-@rm -f $(DAEMON_NAME)_debug
+	-@rm -f $(DAEMON_NAME)_$(DEBUG_SUFFIX)
 	-@rm -f $(OBJECTS)
 	-@rm -f $(DEBUG_OBJECTS)
 	-@rm -f .depend
@@ -146,9 +153,9 @@ distclean: clean
 
 
 .depend: cmd  = echo "  [depend]  $(var)" &&
-.depend: cmd += $(GCC) $(CFLAGS) -MT ".depend $(basename $(var)).o $(basename $(var))_debug.o"  -MM $(var) >> .depend;
-.depend: $(SOURCES)
-	@rm -f .depend
+.depend: cmd += $(GCC) $(CFLAGS) -MT ".depend $(basename $(var)).o $(basename $(var))_$(DEBUG_SUFFIX).o"  -MM $(var) >> .depend;
+.depend: $(GENERATED_DIR)/soapC.c
+	-@rm -f .depend
 	@echo "Generating dependencies..."
 	@$(foreach var, $(SOURCES), $(cmd))
 
@@ -158,20 +165,23 @@ include $(wildcard .depend)
 
 
 
-generated/wsdd.h:
+# ---- gSOAP ----
+
+$(GENERATED_DIR)/wsdd.h:
 	@$(build_gsoap)
 	@mkdir -p $(GENERATED_DIR)
 	$(WSDL2H) -cg -t $(GSOAP_DIR)/WS/typemap.dat  -o $@  wsdl/remotediscovery.wsdl
 
 
 
-generated/soapC.c: $(GENERATED_DIR)/wsdd.h
+$(GENERATED_DIR)/soapC.c: $(GENERATED_DIR)/wsdd.h
 	$(SOAPCPP2) -C -L -x -c -2 -d $(GENERATED_DIR) -I$(GSOAP_DIR):$(GSOAP_IMPORT_DIR) $<
 
 
 
-.PHONY: generate
-generate: $(GENERATED_DIR)/soapC.c
+# This targets is needed for parallel work of make
+$(OBJECTS) $(DEBUG_OBJECTS) $(SOAP_SRC): $(GENERATED_DIR)/soapC.c
+
 
 
 
