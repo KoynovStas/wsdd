@@ -310,16 +310,15 @@ void processing_cmd(int argc, char *argv[])
 
 
 
-void init(void *data)
+void init_gsoap()
 {
-    init_signals();
-
-
-    check_param();
-
-
     // init gsoap server for WS-Discovery service
+
     soap_srv = soap_new1(SOAP_IO_UDP);
+
+    if(!soap_srv)
+        daemon_error_exit("Can't get mem for soap: %m\n");
+
 
     in_addr_t addr               = inet_addr(WSDD_MULTICAST_IP);
     soap_srv->ipv4_multicast_if  = (char *)&addr;  // see setsockopt IPPROTO_IP IP_MULTICAST_IF
@@ -357,7 +356,16 @@ void init(void *data)
     {
         daemon_error_exit("Cant adding multicast group error: %m\n");
     }
+}
 
+
+
+void init(void *data)
+{
+    init_signals();
+
+    check_param();
+    init_gsoap();
 
     // init static wsdd_param
     get_xaddr();
