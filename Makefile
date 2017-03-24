@@ -210,7 +210,7 @@ define build_gsoap
     # get archive
     if [ ! -f SDK/gsoap.zip ]; then \
         mkdir -p SDK; \
-        wget -O ./SDK/gsoap.zip.tmp "https://vorboss.dl.sourceforge.net/project/gsoap2/gsoap-2.8/gsoap_2.8.43.zip"; \
+        wget -O ./SDK/gsoap.zip.tmp "https://sourceforge.net/projects/gsoap2/files/gsoap-2.8/gsoap_2.8.44.zip/download" && \
         mv ./SDK/gsoap.zip.tmp ./SDK/gsoap.zip; \
     fi
 
@@ -222,7 +222,7 @@ define build_gsoap
     # build
     if [ ! -f $(SOAPCPP2) ] || [ ! -f $(WSDL2H) ]; then \
          cd gsoap-2.8; \
-         ./configure; \
+         ./configure && \
          make; \
          cd ..;\
     fi
