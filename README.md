@@ -37,7 +37,7 @@ make help
 ```
 
 
-<br/>
+
 ## Usage
 
 To start the daemon, you have to give him the parameters that are needed for work:
@@ -57,7 +57,7 @@ Or you can use [S90wsdd](./S90wsdd) script to start the daemon:
 ```
 
 
-<br/>
+
 ## Testing
 
 For testing daemon you need client application.
@@ -72,7 +72,7 @@ For testing daemon you need client application.
 1. [ONVIF Device Manager](https://sourceforge.net/projects/onvifdm/)
 
 
-<br/>
+
 ## License
 
 [BSD-3-Clause](./LICENSE).
