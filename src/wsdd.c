@@ -415,6 +415,8 @@ void init(void *data)
     // init static wsdd_param
     get_xaddr();
     get_endpoint();
+
+    send_hello();
 }
 
 
@@ -423,9 +425,6 @@ int main(int argc, char *argv[])
 {
     processing_cmd(argc, argv);
     daemonize2(init, NULL);
-
-
-    send_hello();
 
 
 
