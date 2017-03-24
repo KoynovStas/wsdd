@@ -160,13 +160,26 @@ void send_bye(void)
 
 
 
-void daemon_exit_handler(int sig)
+void free_resources()
 {
-    //Here we release resources
+    //Here we free resources
+
+    send_bye();
+    soap_wsdd_listen(soap_srv, 1);
+
+    soap_destroy(soap_srv);
+    soap_end(soap_srv);
 
     unlink(daemon_info.pid_file);
+}
 
-    daemon_info.terminated = 1;    //set flag terminate main loop
+
+
+void daemon_exit_handler(int sig)
+{
+    free_resources();
+
+    exit(EXIT_SUCCESS); // good job (we interrupted (finished) main loop)
 }
 
 
@@ -436,11 +449,7 @@ int main(int argc, char *argv[])
 
 
 
-    send_bye();
-
-    soap_destroy(soap_srv);
-    soap_end(soap_srv);
-
+    free_resources();
 
     return EXIT_SUCCESS; // good job (we interrupted (finished) main loop)
 }
