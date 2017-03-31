@@ -73,7 +73,7 @@ static const char *help_str =
         "       --endpoint [uuid]      Set UUID for WS-Discovery (default generated a random)\n"
         "       --type     [type]      Set Type of ONVIF service\n"
         "       --scope    [scopes]    Set Scope(s) of ONVIF service\n"
-        "       --xaddr    [URL]       Set address (or template URL) of ONVIF service [in template mode %s "
+        "       --xaddr    [URL]       Set address (or template URL) of ONVIF service [in template mode %s\n"
         "                              will be changed to IP of interfasec (see opt if_name)]\n"
         "       --metdata_ver [ver]    Set Meta data version of ONVIF service (default = 0)\n"
         "  -v   --version              Display daemon version information\n"
