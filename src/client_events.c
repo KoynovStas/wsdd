@@ -59,7 +59,7 @@ soap_wsdd_mode wsdd_event_Probe(struct soap *soap, const char *MessageID, const 
                              wsdd_param->type,
                              wsdd_param->scope,
                              NULL,
-                             wsdd_param->xaddr,
+                             get_xaddr(wsdd_param),
                              wsdd_param->metadata_ver);
 
     soap_wsdd_ProbeMatches(soap,

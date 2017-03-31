@@ -56,6 +56,7 @@ SOURCES  = $(COMMON_DIR)/$(DAEMON_NAME).c   \
            $(COMMON_DIR)/daemon.c           \
            $(COMMON_DIR)/net_utils.c        \
            $(COMMON_DIR)/file_utils.c       \
+           $(COMMON_DIR)/wsdd_utils.c       \
            $(COMMON_DIR)/client_events.c    \
            $(GENERATED_DIR)/soapC.c         \
            $(SOAP_SRC)

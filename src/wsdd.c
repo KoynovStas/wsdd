@@ -41,8 +41,8 @@
 
 // my headers
 #include "daemon.h"
-#include "net_utils.h"
 #include "wsdd_param.h"
+#include "net_utils.h"
 
 
 // gsoap headers
@@ -126,7 +126,7 @@ void send_hello(void)
                               wsdd_param.type,
                               wsdd_param.scope,
                               NULL,
-                              wsdd_param.xaddr,
+                              get_xaddr(&wsdd_param),
                               wsdd_param.metadata_ver);
 
 
@@ -148,7 +148,7 @@ void send_bye(void)
                             wsdd_param.type,
                             wsdd_param.scope,
                             NULL,
-                            wsdd_param.xaddr,
+                            get_xaddr(&wsdd_param),
                             wsdd_param.metadata_ver);
 
 
@@ -218,38 +218,6 @@ void check_param()
 
     if(!wsdd_param.xaddr)
         daemon_error_exit("Error: URL of ONVIF service not set (see opt --xaddr)\n");
-}
-
-
-
-/*
- * This function converts the template parameter (option) --xaddr
- * to final URL for the ONVIF service. If this option is specified on the command line
- * does not contain a template parameter %s function snprintf() just make a copy in a static array.
- * If option contains template parameter %s, it will be replaced by
- * IP addres of Network interface specified by --if_name option.
- *
- * Example:
- * ./wsdd --xaddr "http://192.168.1.1:2000/onvif/device_service" - will not be changed
- *
- * ./wsdd --xaddr "http://%s:2000/onvif/device_service" --if_name eth1
- * template %s will be replaced to the IP address of the network interface eth1
-*/
-void get_xaddr(void)
-{
-    static char tmp[128];
-    char ip[INET_ADDRSTRLEN];
-
-
-    if( get_ip_of_if(wsdd_param.if_name, AF_INET, ip) != 0 )
-    {
-        daemon_error_exit("Cant get addr for interface error: %m\n");
-    }
-
-
-    snprintf(tmp, sizeof(tmp), wsdd_param.xaddr, ip);
-
-    wsdd_param.xaddr = tmp;
 }
 
 
@@ -426,7 +394,6 @@ void init(void *data)
     init_gsoap();
 
     // init static wsdd_param
-    get_xaddr();
     get_endpoint();
 
     send_hello();

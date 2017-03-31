@@ -30,5 +30,10 @@ struct wsdd_param_t
 
 
 
+const char* get_xaddr(struct wsdd_param_t *wsdd_param);
+
+
+
+
 
 #endif // WSDD_PARAM_H
