@@ -39,3 +39,48 @@ const char* get_xaddr(struct wsdd_param_t *wsdd_param)
 
     return xaddr;
 }
+
+
+
+void send_hello(struct soap *soap_srv, struct wsdd_param_t *wsdd_param)
+{
+    int res = soap_wsdd_Hello(soap_srv,
+                              SOAP_WSDD_ADHOC,             // mode
+                              SOAP_WSDD_TS_ADDRESS,        // address of TS
+                              soap_wsa_rand_uuid(soap_srv),// message ID
+                              NULL,
+                              wsdd_param->endpoint,
+                              wsdd_param->type,
+                              wsdd_param->scope,
+                              NULL,
+                              get_xaddr(wsdd_param),
+                              wsdd_param->metadata_ver);
+
+
+    if(res == SOAP_OK)
+        soap_wsdd_listen(soap_srv, 1);
+    else
+        soap_print_fault(soap_srv, stderr);
+}
+
+
+
+void send_bye(struct soap *soap_srv, struct wsdd_param_t *wsdd_param)
+{
+    int res = soap_wsdd_Bye(soap_srv,
+                            SOAP_WSDD_ADHOC,             // mode
+                            SOAP_WSDD_TS_ADDRESS,        // address of TS
+                            soap_wsa_rand_uuid(soap_srv),// message ID
+                            wsdd_param->endpoint,
+                            wsdd_param->type,
+                            wsdd_param->scope,
+                            NULL,
+                            get_xaddr(wsdd_param),
+                            wsdd_param->metadata_ver);
+
+
+    if(res == SOAP_OK)
+        soap_wsdd_listen(soap_srv, 1);
+    else
+        soap_print_fault(soap_srv, stderr);
+}

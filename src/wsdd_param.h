@@ -4,6 +4,9 @@
 #include <stdint.h>
 
 
+#include "wsddapi.h"
+
+
 
 
 
@@ -31,6 +34,10 @@ struct wsdd_param_t
 
 
 const char* get_xaddr(struct wsdd_param_t *wsdd_param);
+
+
+void send_hello(struct soap *soap_srv, struct wsdd_param_t *wsdd_param);
+void send_bye(struct soap *soap_srv, struct wsdd_param_t *wsdd_param);
 
 
 

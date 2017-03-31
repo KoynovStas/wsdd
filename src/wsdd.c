@@ -115,56 +115,12 @@ struct wsdd_param_t  wsdd_param;
 
 
 
-void send_hello(void)
-{
-    int res = soap_wsdd_Hello(soap_srv,
-                              SOAP_WSDD_ADHOC,             // mode
-                              SOAP_WSDD_TS_ADDRESS,        // address of TS
-                              soap_wsa_rand_uuid(soap_srv),// message ID
-                              NULL,
-                              wsdd_param.endpoint,
-                              wsdd_param.type,
-                              wsdd_param.scope,
-                              NULL,
-                              get_xaddr(&wsdd_param),
-                              wsdd_param.metadata_ver);
-
-
-    if(res == SOAP_OK)
-        soap_wsdd_listen(soap_srv, 1);
-    else
-        soap_print_fault(soap_srv, stderr);
-}
-
-
-
-void send_bye(void)
-{
-    int res = soap_wsdd_Bye(soap_srv,
-                            SOAP_WSDD_ADHOC,             // mode
-                            SOAP_WSDD_TS_ADDRESS,        // address of TS
-                            soap_wsa_rand_uuid(soap_srv),// message ID
-                            wsdd_param.endpoint,
-                            wsdd_param.type,
-                            wsdd_param.scope,
-                            NULL,
-                            get_xaddr(&wsdd_param),
-                            wsdd_param.metadata_ver);
-
-
-    if(res == SOAP_OK)
-        soap_wsdd_listen(soap_srv, 1);
-    else
-        soap_print_fault(soap_srv, stderr);
-}
-
-
 
 void free_resources()
 {
     //Here we free resources
 
-    send_bye();
+    send_bye(soap_srv, &wsdd_param);
     soap_wsdd_listen(soap_srv, 1);
 
     soap_destroy(soap_srv);
@@ -396,7 +352,7 @@ void init(void *data)
     // init static wsdd_param
     get_endpoint();
 
-    send_hello();
+    send_hello(soap_srv, &wsdd_param);
 }
 
 
