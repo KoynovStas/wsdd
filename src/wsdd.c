@@ -115,7 +115,6 @@ struct wsdd_param_t  wsdd_param;
 
 
 
-
 void free_resources()
 {
     //Here we free resources
@@ -180,21 +179,15 @@ void check_param()
 
 void get_endpoint(void)
 {
-    static char tmp[48];      //UUID "urn:uuid:xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
-
     if(wsdd_param.endpoint)
         return; // good job user set endpoint from cmd
 
 
-    const char *random_UUID = soap_wsa_rand_uuid(soap_srv);
+    wsdd_param.endpoint = get_rand_endpoint(soap_srv);
 
-    if(!random_UUID)
+
+    if(!wsdd_param.endpoint)
         daemon_error_exit("Error: cant get random UUID\n");
-
-
-    snprintf(tmp, sizeof(tmp), "%s", random_UUID);
-
-    wsdd_param.endpoint = tmp;
 }
 
 

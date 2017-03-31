@@ -42,6 +42,22 @@ const char* get_xaddr(struct wsdd_param_t *wsdd_param)
 
 
 
+const char* get_rand_endpoint(struct soap *soap_srv)
+{
+    static char tmp[48];      //UUID "urn:uuid:xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+
+    const char *random_UUID = soap_wsa_rand_uuid(soap_srv);
+
+    if(!random_UUID)
+        return NULL;
+
+    snprintf(tmp, sizeof(tmp), "%s", random_UUID);
+
+    return tmp;
+}
+
+
+
 void send_hello(struct soap *soap_srv, struct wsdd_param_t *wsdd_param)
 {
     int res = soap_wsdd_Hello(soap_srv,

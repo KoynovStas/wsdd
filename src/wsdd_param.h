@@ -34,6 +34,7 @@ struct wsdd_param_t
 
 
 const char* get_xaddr(struct wsdd_param_t *wsdd_param);
+const char* get_rand_endpoint(struct soap *soap_srv);
 
 
 void send_hello(struct soap *soap_srv, struct wsdd_param_t *wsdd_param);
