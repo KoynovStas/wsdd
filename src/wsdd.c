@@ -81,27 +81,52 @@ static const char *help_str =
 
 
 
+// indexes for long_opt function
+enum
+{
+    cmd_opt_help    = 'h',
+    cmd_opt_version = 'v',
+
+    //daemon options
+    cmd_opt_no_chdir,
+    cmd_opt_no_close,
+    cmd_opt_pid_file,
+    cmd_opt_log_file,
+
+    //WS-Discovery Service options
+    cmd_opt_if_name,
+    cmd_opt_endpoint,
+    cmd_opt_type,
+    cmd_opt_scope,
+    cmd_opt_xaddr,
+    cmd_opt_metdata_ver
+};
+
+
+
 static const char *short_opts = "hv";
 
 
 static const struct option long_opts[] =
 {
-    { "version",      no_argument,       NULL, 'v' },
-    { "help",         no_argument,       NULL, 'h' },
-    { "no_chdir",     no_argument,       NULL,  1  },
-    { "no_close",     no_argument,       NULL,  2  },
-    { "pid_file",     required_argument, NULL,  3  },
-    { "log_file",     required_argument, NULL,  4  },
+    { "version",      no_argument,       NULL, cmd_opt_version  },
+    { "help",         no_argument,       NULL, cmd_opt_help     },
 
-    // wsdd param
-    { "if_name",      required_argument, NULL,  5  },
-    { "endpoint",     required_argument, NULL,  6  },
-    { "type",         required_argument, NULL,  7  },
-    { "scope",        required_argument, NULL,  8  },
-    { "xaddr",        required_argument, NULL,  9  },
-    { "metdata_ver",  required_argument, NULL,  10 },
+    //daemon options
+    { "no_chdir",     no_argument,       NULL, cmd_opt_no_chdir },
+    { "no_close",     no_argument,       NULL, cmd_opt_no_close },
+    { "pid_file",     required_argument, NULL, cmd_opt_pid_file },
+    { "log_file",     required_argument, NULL, cmd_opt_log_file },
 
-    { NULL,           no_argument,       NULL,  0  }
+    //WS-Discovery Service options
+    { "if_name",      required_argument, NULL, cmd_opt_if_name     },
+    { "endpoint",     required_argument, NULL, cmd_opt_endpoint    },
+    { "type",         required_argument, NULL, cmd_opt_type        },
+    { "scope",        required_argument, NULL, cmd_opt_scope       },
+    { "xaddr",        required_argument, NULL, cmd_opt_xaddr       },
+    { "metdata_ver",  required_argument, NULL, cmd_opt_metdata_ver },
+
+    { NULL,           no_argument,       NULL, 0  }
 };
 
 
@@ -205,77 +230,69 @@ void processing_cmd(int argc, char *argv[])
         switch( opt )
         {
 
-            case 'v':
-                        printf("%s  version  %d.%d.%d\n", DAEMON_NAME, DAEMON_MAJOR_VERSION,
-                                                                       DAEMON_MINOR_VERSION,
-                                                                       DAEMON_PATCH_VERSION);
-                        exit_if_not_daemonized(EXIT_SUCCESS);
-                        break;
-
-            case 'h':
-
+            case cmd_opt_help:
                         printf(help_str, DAEMON_NAME, DAEMON_MAJOR_VERSION,
                                                       DAEMON_MINOR_VERSION,
                                                       DAEMON_PATCH_VERSION);
                         exit_if_not_daemonized(EXIT_SUCCESS);
                         break;
 
-            case '?':
-            case ':':
-                        printf("for more detail see help\n\n");
-                        exit_if_not_daemonized(EXIT_FAILURE);
+            case cmd_opt_version:
+                        printf("%s  version  %d.%d.%d\n", DAEMON_NAME, DAEMON_MAJOR_VERSION,
+                                                                       DAEMON_MINOR_VERSION,
+                                                                       DAEMON_PATCH_VERSION);
+                        exit_if_not_daemonized(EXIT_SUCCESS);
                         break;
 
-//            case 0:     // long options
-//                        if( strcmp( "name_options", long_opts[long_index].name ) == 0 )
-//                        {
-//                            //Processing of "name_options"
-//                            break;
-//                        }
 
-            case 1:     // --no_chdir
+                 //daemon options
+            case cmd_opt_no_chdir:
                         daemon_info.no_chdir = 1;
                         break;
 
-            case 2:     // --no_close
+            case cmd_opt_no_close:
                         daemon_info.no_close_stdio = 1;
                         break;
 
-            case 3:     // --pid_file
+            case cmd_opt_pid_file:
                         daemon_info.pid_file = optarg;
                         break;
 
-            case 4:     // --log_file
+            case cmd_opt_log_file:
                         daemon_info.log_file = optarg;
                         break;
 
 
-            case 5:     // --if_name
+                 //WS-Discovery Service options
+            case cmd_opt_if_name:
                         wsdd_param.if_name = optarg;
                         break;
 
-            case 6:     // --endpoint
+            case cmd_opt_endpoint:
                         wsdd_param.endpoint = optarg;
                         break;
 
-            case 7:     // --type
+            case cmd_opt_type:
                         wsdd_param.type = optarg;
                         break;
 
-            case 8:     // --scope
+            case cmd_opt_scope:
                         wsdd_param.scope = optarg;
                         break;
 
-            case 9:     // --xaddr
+            case cmd_opt_xaddr:
                         wsdd_param.xaddr = optarg;
                         break;
 
-            case 10:     // --metdata_ver
-                        wsdd_param.metadata_ver = strtoul(optarg, NULL, 10);;
+            case cmd_opt_metdata_ver:
+                        wsdd_param.metadata_ver = strtoul(optarg, NULL, 10);
                         break;
 
+
             default:
-                  break;
+                        printf("for more detail see help\n\n");
+                        exit_if_not_daemonized(EXIT_FAILURE);
+                        break;
         }
 
         opt = getopt_long(argc, argv, short_opts, long_opts, &long_index);
