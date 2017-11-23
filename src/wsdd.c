@@ -58,8 +58,8 @@
 
 static const char *help_str =
         " ===============  Help  ===============\n"
-        " Daemon name:  %s\n"
-        " Daemon  ver:  %d.%d.%d\n"
+        " Daemon name:  " DAEMON_NAME          "\n"
+        " Daemon  ver:  " DAEMON_VERSION_STR   "\n"
 #ifdef  DEBUG
         " Build  mode:  debug\n"
 #else
@@ -69,9 +69,10 @@ static const char *help_str =
         " Build  time:  " __TIME__ "\n\n"
         "Options:                      description:\n\n"
         "       --no_chdir             Don't change the directory to '/'\n"
+        "       --no_fork              Don't do fork\n"
         "       --no_close             Don't close standart IO files\n"
         "       --pid_file [value]     Set pid file name\n"
-        "       --log_file [value]     Set log file name\n"
+        "       --log_file [value]     Set log file name\n\n"
         "       --if_name  [interface] Set Network Interface for add to multicast group\n"
         "       --endpoint [uuid]      Set UUID for WS-Discovery (default generated a random)\n"
         "       --type     [type]      Set Type of ONVIF service\n"
@@ -79,8 +80,8 @@ static const char *help_str =
         "       --xaddr    [URL]       Set address (or template URL) of ONVIF service [in template mode %s\n"
         "                              will be changed to IP of interfasec (see opt if_name)]\n"
         "       --metdata_ver [ver]    Set Meta data version of ONVIF service (default = 0)\n"
-        "  -v   --version              Display daemon version information\n"
-        "  -h,  --help                 Display this information\n\n";
+        "  -v,  --version              Display daemon version\n"
+        "  -h,  --help                 Display this help\n\n";
 
 
 
@@ -92,6 +93,7 @@ enum
 
     //daemon options
     cmd_opt_no_chdir,
+    cmd_opt_no_fork,
     cmd_opt_no_close,
     cmd_opt_pid_file,
     cmd_opt_log_file,
@@ -117,6 +119,7 @@ static const struct option long_opts[] =
 
     //daemon options
     { "no_chdir",     no_argument,       NULL, cmd_opt_no_chdir },
+    { "no_fork",      no_argument,       NULL, cmd_opt_no_fork  },
     { "no_close",     no_argument,       NULL, cmd_opt_no_close },
     { "pid_file",     required_argument, NULL, cmd_opt_pid_file },
     { "log_file",     required_argument, NULL, cmd_opt_log_file },
@@ -169,14 +172,12 @@ void daemon_exit_handler(int sig)
 
 void init_signals(void)
 {
-
     struct sigaction sa;
 
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = daemon_exit_handler;
     if( sigaction(SIGTERM, &sa, NULL) != 0 )
         daemon_error_exit("Can't set daemon_exit_handler: %m\n");
-
 
 
     signal(SIGCHLD, SIG_IGN); // ignore child
@@ -222,28 +223,20 @@ void get_endpoint(void)
 
 void processing_cmd(int argc, char *argv[])
 {
+    int opt;
 
-    int opt, long_index;
-
-
-
-    opt = getopt_long(argc, argv, short_opts, long_opts, &long_index);
-    while( opt != -1 )
+    while( (opt = getopt_long(argc, argv, short_opts, long_opts, NULL)) != -1 )
     {
         switch( opt )
         {
 
             case cmd_opt_help:
-                        printf(help_str, DAEMON_NAME, DAEMON_MAJOR_VERSION,
-                                                      DAEMON_MINOR_VERSION,
-                                                      DAEMON_PATCH_VERSION);
+                        puts(help_str);
                         exit_if_not_daemonized(EXIT_SUCCESS);
                         break;
 
             case cmd_opt_version:
-                        printf("%s  version  %d.%d.%d\n", DAEMON_NAME, DAEMON_MAJOR_VERSION,
-                                                                       DAEMON_MINOR_VERSION,
-                                                                       DAEMON_PATCH_VERSION);
+                        puts(DAEMON_NAME "  version  " DAEMON_VERSION_STR "\n");
                         exit_if_not_daemonized(EXIT_SUCCESS);
                         break;
 
@@ -251,6 +244,10 @@ void processing_cmd(int argc, char *argv[])
                  //daemon options
             case cmd_opt_no_chdir:
                         daemon_info.no_chdir = 1;
+                        break;
+
+            case cmd_opt_no_fork:
+                        daemon_info.no_fork = 1;
                         break;
 
             case cmd_opt_no_close:
@@ -293,14 +290,11 @@ void processing_cmd(int argc, char *argv[])
 
 
             default:
-                        printf("for more detail see help\n\n");
+                        puts("for more detail see help\n\n");
                         exit_if_not_daemonized(EXIT_FAILURE);
                         break;
         }
-
-        opt = getopt_long(argc, argv, short_opts, long_opts, &long_index);
     }
-
 }
 
 
