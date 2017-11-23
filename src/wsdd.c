@@ -332,7 +332,7 @@ void init_gsoap()
 
 
     // Join the multicast group 239.255.255.250 on the local interface
-    // interface. Note that this IP_ADD_MEMBERSHIP option must be
+    // Note that this IP_ADD_MEMBERSHIP option must be
     // called for each local interface over which the multicast
     // datagrams are to be received.
     struct ip_mreqn mcast;
@@ -373,13 +373,11 @@ int main(int argc, char *argv[])
     daemonize2(init, NULL);
 
 
-
     while( !daemon_info.terminated )
     {
         if(soap_wsdd_listen(soap_srv, 1))
             soap_print_fault(soap_srv, stderr); // report the problem
     }
-
 
 
     free_resources();
