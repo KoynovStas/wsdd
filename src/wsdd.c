@@ -139,8 +139,8 @@ static const struct option long_opts[] =
 
 
 
-struct soap*         soap_srv;
-struct wsdd_param_t  wsdd_param;
+static struct soap*         soap_srv;
+static struct wsdd_param_t  wsdd_param;
 
 
 
@@ -184,7 +184,7 @@ void init_signals(void)
     signal(SIGTSTP, SIG_IGN); // ignore tty signals
     signal(SIGTTOU, SIG_IGN);
     signal(SIGTTIN, SIG_IGN);
-    signal(SIGHUP, SIG_IGN);
+    signal(SIGHUP,  SIG_IGN);
 }
 
 
