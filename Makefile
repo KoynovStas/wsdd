@@ -150,6 +150,7 @@ clean:
 distclean: clean
 	-@rm -f -d -R SDK
 	-@rm -f -d -R gsoap-2.8
+	-@rm -f RECV.log SENT.log TEST.log
 
 
 
