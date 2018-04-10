@@ -56,6 +56,15 @@ Or you can use [S90wsdd](./S90wsdd) script to start the daemon:
 ./S90wsdd start
 ```
 
+Or you can use [S90wsdd](./start_scripts/S90wsdd) script to start the daemon (for old init.d script style):
+```console
+./start_scripts/S90wsdd start
+```
+
+If You use systemd see:
+[wsdd.service](./start_scripts/wsdd.service)
+
+
 
 
 ## Testing
