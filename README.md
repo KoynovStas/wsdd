@@ -51,10 +51,6 @@ For more details see help:
 ./wsdd --help
 ```
 
-Or you can use [S90wsdd](./S90wsdd) script to start the daemon:
-```console
-./S90wsdd start
-```
 
 Or you can use [S90wsdd](./start_scripts/S90wsdd) script to start the daemon (for old init.d script style):
 ```console
