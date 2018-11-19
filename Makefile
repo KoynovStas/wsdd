@@ -154,12 +154,14 @@ distclean: clean
 
 
 
-.depend: cmd  = echo "  [depend]  $(var)" &&
-.depend: cmd += $(GCC) $(CFLAGS) -MT ".depend $(basename $(var)).o $(basename $(var))_$(DEBUG_SUFFIX).o"  -MM $(var) >> .depend;
 .depend: $(GENERATED_DIR)/soapC.c
 	-@rm -f .depend
 	@echo "Generating dependencies..."
-	@$(foreach var, $(SOURCES), $(cmd))
+	@for src in $(SOURCES) ; do \
+        echo "  [depend]  $$src" ; \
+        $(GCC) $(CFLAGS) -MT ".depend $${src%.*}.o $${src%.*}_$(DEBUG_SUFFIX).o" -MM $$src >> .depend ; \
+    done
+
 
 
 ifeq "$(findstring $(MAKECMDGOALS),clean distclean)"  ""
