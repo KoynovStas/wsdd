@@ -128,20 +128,18 @@ int get_ip_of_host(const char *host_name, int af, char *IP)
  *
  * in:   if_name - network interface name in a string format of such "eth0"
  *       af      - valid address types are AF_INET and AF_INET6
-         addr    - a pointer to the structure of the address,
- *                 which will be copied to the host address.
- *                 This format is an IP address is necessary
- *                 in functions such as connect()
+         addr    - a pointer to the structure of the sockaddr_in or sockaddr_in,
+ *                 which the host address will be copied to .
  *
  * ret:  0 - success
  *      -1 - failure (see errno)
  */
-int get_addr_of_if(const char *if_name, int af, void *addr)
+int get_addr_of_if(const char *if_name, int af, void *addr, int addr_len)
 {
 
     struct ifaddrs *ifa_head;
     struct ifaddrs *ifa_cur;
-    int result, addr_len;
+    int result;
     void *src;
 
 
@@ -152,6 +150,12 @@ int get_addr_of_if(const char *if_name, int af, void *addr)
         return -1;
     }
 
+    // check the sizeof addr so we won't mess up the stack at memcpy calls
+    if( addr_len != sizeof(struct sockaddr_in6) && addr_len != sizeof(struct sockaddr_in) )
+    {
+        errno = EINVAL;
+        return -1;
+    }
 
     if( getifaddrs(&ifa_head) != 0 )
       return -1;
@@ -179,15 +183,9 @@ int get_addr_of_if(const char *if_name, int af, void *addr)
 
 
         if( af == AF_INET6)
-        {
-            addr_len = sizeof(struct sockaddr_in6);
-            src      = &(((struct sockaddr_in6 *)ifa_cur->ifa_addr)->sin6_addr);
-        }
+            src = &(((struct sockaddr_in6 *)ifa_cur->ifa_addr)->sin6_addr);
         else
-        {
-            addr_len = sizeof(struct sockaddr_in);
-            src      = &(((struct sockaddr_in *)ifa_cur->ifa_addr)->sin_addr);
-        }
+            src = &(((struct sockaddr_in *)ifa_cur->ifa_addr)->sin_addr);
 
 
         memcpy(addr, src, addr_len);
