@@ -334,10 +334,13 @@ void init_gsoap()
     // datagrams are to be received.
     struct ip_mreqn mcast;
     mcast.imr_multiaddr.s_addr = inet_addr(WSDD_MULTICAST_IP);
-    if( get_addr_of_if(wsdd_param.if_name, AF_INET, &mcast.imr_address) != 0 )
+
+    struct sockaddr_in addr;
+    if( get_addr_of_if(wsdd_param.if_name, AF_INET, &addr, sizeof(addr)) != 0 )
     {
         daemon_error_exit("Cant get addr for interface error: %m\n");
     }
+    mcast.imr_address = addr.sin_addr;
 
     setsockopt(soap_srv->master, IPPROTO_IP, IP_MULTICAST_IF, &mcast.imr_address.s_addr, sizeof(struct in_addr));
 
