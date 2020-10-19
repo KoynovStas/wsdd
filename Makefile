@@ -10,6 +10,7 @@ DAEMON_NO_CLOSE_STDIO = 0
 
 
 
+GSOAP_VERSION     = 2.8.66
 GSOAP_INSTALL_DIR = ./gsoap-2.8
 GSOAP_DIR         = $(GSOAP_INSTALL_DIR)/gsoap
 GSOAP_PLUGIN_DIR  = $(GSOAP_DIR)/plugin
@@ -217,7 +218,7 @@ define build_gsoap
     # get archive
     if [ ! -f SDK/gsoap.zip ]; then \
         mkdir -p SDK; \
-        wget -O ./SDK/gsoap.zip.tmp "https://sourceforge.net/projects/gsoap2/files/gsoap-2.8/gsoap_2.8.66.zip/download" && \
+        wget -O ./SDK/gsoap.zip.tmp "https://sourceforge.net/projects/gsoap2/files/gsoap-2.8/gsoap_$(GSOAP_VERSION).zip/download" && \
         mv ./SDK/gsoap.zip.tmp ./SDK/gsoap.zip; \
     fi
 
