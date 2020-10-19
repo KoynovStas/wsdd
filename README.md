@@ -5,9 +5,10 @@
 
 wsdd is Linux daemon for ONVIF WS-Discovery service (server side).
 
-ONVIF official website: [http://www.onvif.org](http://www.onvif.org)
+ONVIF official website: [https://www.onvif.org](https://www.onvif.org)
+and their [github presence](https://github.com/onvif/).
 
-The web services data binding is generated using [gSOAP](http://www.genivia.com)
+The web services data binding is generated using [gSOAP](https://www.genivia.com)
 
 For more details about it see the [gSOAP WS-Discovery plugin official manual.](https://www.genivia.com/doc/wsdd/html/wsdd_0.html)
 
