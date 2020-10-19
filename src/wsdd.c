@@ -46,6 +46,7 @@
 #include "daemon.h"
 #include "wsdd_param.h"
 #include "net_utils.h"
+#include "smacros.h"
 
 
 // gsoap headers
@@ -163,6 +164,7 @@ void free_resources()
 
 void daemon_exit_handler(int sig)
 {
+    UNUSED(sig);
     free_resources();
 
     exit(EXIT_SUCCESS); // good job (we interrupted (finished) main loop)
@@ -351,6 +353,7 @@ void init_gsoap()
 
 void init(void *data)
 {
+    UNUSED(data);
     init_signals();
 
     check_param();
