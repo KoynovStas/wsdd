@@ -31,25 +31,18 @@ sudo apt install openssl libssl-dev libcrypto++6
 
 To start build you have to choose your compiler (or toolchain) in the [Makefile](./Makefile) (see variable `$CC`).
 
-For build daemon in release and debug mode:
+For build use make for [Makefile](./Makefile):
 ```console
-make all
+make target
 ```
 
-For build daemon in release mode (strip):
-```console
-make release
-```
-
-For build daemon in debug mode (#define DEBUG 1):
-```console
-make debug
-```
-
-Show all supported commands(targets) for Makefile:
-```console
-make help
-```
+target is:
+ - `all`       -  build daemon in release and debug mode
+ - `debug`     -  build in debug mode (#define DEBUG 1)
+ - `release`   -  build in release mode (strip)
+ - `clean`     -  remove all generated files
+ - `distclean` -  clean + remove all SDK files
+ - `help`      -  show list support targets
 
 
 
