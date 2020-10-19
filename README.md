@@ -15,6 +15,20 @@ For more details about it see the [gSOAP WS-Discovery plugin official manual.](h
 
 ## Build
 
+#### Dependencies
+Most Linux systems for building this project require the following packages to be installed: `make m4 flex bison byacc yacc`
+
+If you need support for encryption and WS-Security then you also need: `openssl zlib libcrypto`
+
+
+For example, on ubuntu 20.04, you needed to install:
+```console
+sudo apt install flex bison byacc make m4
+
+#for support encryption and WS-Security
+sudo apt install openssl libssl-dev libcrypto++6
+```
+
 To start build you have to choose your compiler (or toolchain) in the [Makefile](./Makefile) (see variable `$CC`).
 
 For build daemon in release and debug mode:
