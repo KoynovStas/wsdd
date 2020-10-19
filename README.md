@@ -14,7 +14,7 @@ For more details about it see the [gSOAP WS-Discovery plugin official manual.](h
 
 ## Build
 
-To start build you have to choose your compiler (or toolchain) in the [Makefile](./Makefile) (see variable `$GCC`).
+To start build you have to choose your compiler (or toolchain) in the [Makefile](./Makefile) (see variable `$CC`).
 
 For build daemon in release and debug mode:
 ```console
