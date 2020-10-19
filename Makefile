@@ -19,6 +19,7 @@ GSOAP_IMPORT_DIR  = $(GSOAP_DIR)/import
 
 SOAPCPP2          = $(GSOAP_DIR)/src/soapcpp2
 WSDL2H            = $(GSOAP_DIR)/wsdl/wsdl2h
+GSOAP_CONFIGURE   = --disable-c-locale --disable-ssl
 
 
 COMMON_DIR        = ./src
@@ -232,7 +233,7 @@ define build_gsoap
     # build
     if [ ! -f $(SOAPCPP2) ] || [ ! -f $(WSDL2H) ]; then \
          cd $(GSOAP_INSTALL_DIR); \
-         ./configure && \
+         ./configure $(GSOAP_CONFIGURE) && \
          make -j1; \
          cd ..;\
     fi
