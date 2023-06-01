@@ -88,7 +88,7 @@ For testing daemon you need client application.
 
 ## License
 
-[BSD-3-Clause](./LICENSE).
+[GPLv2](./LICENSE).
 
 
 ## Copyright
