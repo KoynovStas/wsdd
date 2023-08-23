@@ -45,6 +45,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <signal.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -229,6 +230,15 @@ int create_pid_file(const char *pid_file_name)
 
 
     return fd; //good job
+}
+
+
+
+
+void set_sig_handler(int sig, signal_handler_t handler)
+{
+    if(signal(sig, handler) == SIG_ERR)
+        daemon_error_exit("Can't set handler for signal: %d %m\n", sig);
 }
 
 

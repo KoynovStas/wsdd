@@ -95,9 +95,12 @@ void daemon_error_exit(const char *format, ...);
 void exit_if_not_daemonized(int exit_status);
 
 
+typedef void (*signal_handler_t) (int);
+
+void set_sig_handler(int sig, signal_handler_t handler);
+
 
 void daemonize2(void (*optional_init)(void *), void *data);
-
 static inline void daemonize() { daemonize2(NULL, NULL); }
 
 
