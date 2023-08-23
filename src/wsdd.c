@@ -174,6 +174,7 @@ void daemon_exit_handler(int sig)
 
 void init_signals(void)
 {
+    set_sig_handler(SIGINT,  daemon_exit_handler); //for Ctrl-C in terminal for debug (need --no_fork)
     set_sig_handler(SIGTERM, daemon_exit_handler);
 
     set_sig_handler(SIGCHLD, SIG_IGN); // ignore child
