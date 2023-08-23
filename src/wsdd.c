@@ -174,19 +174,13 @@ void daemon_exit_handler(int sig)
 
 void init_signals(void)
 {
-    struct sigaction sa;
+    set_sig_handler(SIGTERM, daemon_exit_handler);
 
-    memset(&sa, 0, sizeof(sa));
-    sa.sa_handler = daemon_exit_handler;
-    if( sigaction(SIGTERM, &sa, NULL) != 0 )
-        daemon_error_exit("Can't set daemon_exit_handler: %m\n");
-
-
-    signal(SIGCHLD, SIG_IGN); // ignore child
-    signal(SIGTSTP, SIG_IGN); // ignore tty signals
-    signal(SIGTTOU, SIG_IGN);
-    signal(SIGTTIN, SIG_IGN);
-    signal(SIGHUP,  SIG_IGN);
+    set_sig_handler(SIGCHLD, SIG_IGN); // ignore child
+    set_sig_handler(SIGTSTP, SIG_IGN); // ignore tty signals
+    set_sig_handler(SIGTTOU, SIG_IGN);
+    set_sig_handler(SIGTTIN, SIG_IGN);
+    set_sig_handler(SIGHUP,  SIG_IGN);
 }
 
 
