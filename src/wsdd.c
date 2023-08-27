@@ -41,6 +41,7 @@
 #include <signal.h>
 #include <getopt.h>
 
+#include <net/if.h> //for if_nametoindex
 
 // my headers
 #include "daemon.h"
@@ -338,6 +339,12 @@ void init_gsoap()
     if( get_addr_of_if(wsdd_param.if_name, AF_INET, &mcast.imr_address) != 0 )
     {
         daemon_error_exit("Cant get addr for interface error: %m\n");
+    }
+
+    mcast.imr_ifindex = if_nametoindex(wsdd_param.if_name);
+    if( mcast.imr_ifindex == 0 )
+    {
+        daemon_error_exit("Cant get index for interface error: %m\n");
     }
 
     setsockopt(soap_srv->master, IPPROTO_IP, IP_MULTICAST_IF, &mcast.imr_address.s_addr, sizeof(struct in_addr));
