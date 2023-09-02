@@ -32,7 +32,6 @@
  *
  */
 
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -48,7 +47,6 @@
 #include "wsdd_param.h"
 #include "net_utils.h"
 #include "smacros.h"
-
 
 // gsoap headers
 #include "wsdd.nsmap"
