@@ -3,7 +3,7 @@
 
 ## Description
 
-wsdd is Linux daemon for ONVIF WS-Discovery service (server side).
+**wsdd** is Linux daemon for ONVIF WS-Discovery service (server side).
 
 ONVIF official website: [https://www.onvif.org](https://www.onvif.org)
 and their [github presence](https://github.com/onvif/).
@@ -11,6 +11,7 @@ and their [github presence](https://github.com/onvif/).
 The web services data binding is generated using [gSOAP](https://www.genivia.com)
 
 For more details about it see the [gSOAP WS-Discovery plugin official manual.](https://www.genivia.com/doc/wsdd/html/wsdd_0.html)
+
 
 
 ## Build
@@ -21,28 +22,63 @@ Most Linux systems for building this project require the following packages to b
 If you need support for encryption and WS-Security then you also need: `openssl zlib libcrypto`
 
 
-For example, on ubuntu 20.04, you needed to install:
+For example, on ubuntu 22.04, you needed to install:
 ```console
-sudo apt install flex bison byacc make m4
+sudo apt install flex bison byacc make cmake m4
 
 #for support encryption and WS-Security
-sudo apt install openssl libssl-dev zlib1g-dev libcrypto++6
+sudo apt install openssl libssl-dev zlib1g-dev libcrypto++8
 ```
 
-To start build you have to choose your compiler (or toolchain) in the [Makefile](./Makefile) (see variable `$CC`).
 
-For build use make for [Makefile](./Makefile):
+For build use cmake for [CMakeLists.txt](./CMakeLists.txt):
+
+You have 4 build variants:
+
+1. By default, the build takes place in the old style (when there was a `Makefile`)
+  We build our own version of `gSOAP` and use it (see [build_gsoap.cmake](./cmake/build_gsoap.cmake)).
+  At the same time, we compile the necessary `gSOAP` functions with the project.
+
 ```console
-make target
+cd repo_dir
+cmake -B build .
+cmake --build build
 ```
 
-target is:
- - `all`       -  build daemon in release and debug mode
- - `debug`     -  build in debug mode (#define DEBUG 1)
- - `release`   -  build in release mode (strip)
- - `clean`     -  remove all generated files
- - `distclean` -  clean + remove all SDK files
- - `help`      -  show list support targets
+
+2. Analogue of the 1st, but we use the static library `gSOAP` (we link it)
+
+```console
+cd repo_dir
+cmake -B build . -DUSE_GSOAP_STATIC_LIB=1
+cmake --build build
+```
+
+
+3. We use the system `gSOAP`, for this we use the search module([FindgSOAP.cmake](./cmake/FindgSOAP.cmake)),
+ this module should find the `gSOAP` in the system that we will use.
+
+```console
+cd repo_dir
+cmake -B build . -DUSE_SYSTEM_GSOAP=1
+cmake --build build
+```
+
+For example, in Ubuntu 22.04, to install `gSOAP`, you need to install the following packages:
+
+```console
+sudo apt install gsoap libgsoap-dev
+```
+
+
+4. Analogue of the 3rd, but we tell the [FindgSOAP.cmake](./cmake/FindgSOAP.cmake) search module to look for static libraries instead of shared ones.
+  This will allow you not to depend on the `gSOAP` system libraries.
+
+```console
+cd repo_dir
+cmake -B build . -DUSE_SYSTEM_GSOAP=1 -DUSE_GSOAP_STATIC_LIB=1
+cmake --build build
+```
 
 
 
@@ -70,7 +106,6 @@ If You use systemd see:
 
 
 
-
 ## Testing
 
 For testing daemon you need client application.
@@ -91,5 +126,7 @@ For testing daemon you need client application.
 [GPLv2](./LICENSE).
 
 
+
 ## Copyright
+
 Copyright (C) 2016 Koynov Stas - skojnov@yandex.ru
