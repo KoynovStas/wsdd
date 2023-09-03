@@ -145,6 +145,7 @@ add_custom_command(
     COMMAND "${CMAKE_COMMAND}" -E make_directory ${GENERATED_DIR}
     COMMAND ${GSOAP_WSDL2H} -cg -t ${GSOAP_WS_DIR}/typemap.dat
             -o ${GENERATED_DIR}/wsdd.h  ${WSDL_DIR}/remotediscovery.wsdl
+    COMMENT "Creating gSOAP binding file"
 )
 
 
@@ -153,6 +154,7 @@ add_custom_command(
     COMMAND ${GSOAP_SOAPCPP2} -C -L -x -c -2 -d ${GENERATED_DIR}
             -I${GSOAP_INCLUDE_DIR}:${GSOAP_IMPORT_DIR} ${GENERATED_DIR}/wsdd.h
     DEPENDS ${GENERATED_DIR}/wsdd.h
+    COMMENT "Creating gSOAP stubs and glue code"
 )
 
 
