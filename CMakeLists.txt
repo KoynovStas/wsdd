@@ -5,6 +5,12 @@ message(STATUS "Generator is set to: ${CMAKE_GENERATOR}")
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+    message(STATUS "No CMAKE_BUILD_TYPE specified, force set to: ${CMAKE_BUILD_TYPE}")
+endif()
+
+
 set(DAEMON_NAME          wsdd)
 set(DAEMON_MAJOR_VERSION 3)
 set(DAEMON_MINOR_VERSION 0)
@@ -14,7 +20,7 @@ set(DAEMON_PATCH_VERSION patch)
 set(DAEMON_PID_FILE_NAME  ${DAEMON_NAME}.pid)
 set(DAEMON_LOG_FILE_NAME  ${DAEMON_NAME}.log)
 set(DAEMON_NO_CHDIR       1)
-set(DAEMON_NO_CLOSE_STDIO 0)
+set(DAEMON_NO_CLOSE_STDIO $<STREQUAL:$<LOWER_CASE:${CMAKE_BUILD_TYPE}>,debug>) # 1 (NO_CLOSE if debug)
 
 
 project(${DAEMON_NAME} LANGUAGES C)
@@ -35,10 +41,13 @@ add_compile_options(
 )
 
 
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
-    message(STATUS "No CMAKE_BUILD_TYPE specified, force set to: ${CMAKE_BUILD_TYPE}")
-endif()
+add_compile_definitions(
+    DAEMON_NAME="${DAEMON_NAME}"
+    DAEMON_PID_FILE_NAME="${DAEMON_PID_FILE_NAME}"
+    DAEMON_LOG_FILE_NAME="${DAEMON_LOG_FILE_NAME}"
+    DAEMON_NO_CHDIR=${DAEMON_NO_CHDIR}
+    DAEMON_NO_CLOSE_STDIO=${DAEMON_NO_CLOSE_STDIO}
+)
 
 
 
@@ -59,29 +68,9 @@ endif()
 
 
 
-add_compile_definitions(
-    DAEMON_NAME="${DAEMON_NAME}"
-    DAEMON_PID_FILE_NAME="${DAEMON_PID_FILE_NAME}"
-    DAEMON_LOG_FILE_NAME="${DAEMON_LOG_FILE_NAME}"
-    DAEMON_NO_CHDIR=${DAEMON_NO_CHDIR}
-    DAEMON_NO_CLOSE_STDIO=${DAEMON_NO_CLOSE_STDIO}
-)
-
-
-
 set(COMMON_DIR    "${CMAKE_SOURCE_DIR}/src")
 set(WSDL_DIR      "${CMAKE_SOURCE_DIR}/wsdl")
 set(GENERATED_DIR "${CMAKE_BINARY_DIR}/generated")
-
-
-
-include_directories(
-    ${COMMON_DIR}
-    ${GENERATED_DIR}
-    ${GSOAP_INCLUDE_DIR}
-    ${GSOAP_PLUGIN_DIR}
-    ${GSOAP_IMPORT_DIR}
-)
 
 
 
@@ -138,6 +127,15 @@ set(HEADERS
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${COMMON_DIR}
+    ${GENERATED_DIR}
+    ${GSOAP_INCLUDE_DIR}
+    ${GSOAP_PLUGIN_DIR}
+    ${GSOAP_IMPORT_DIR}
+)
+
+
 
 #Create a cmake target that generate gsoap files
 add_custom_command(
@@ -163,17 +161,6 @@ add_custom_target(gsoap_generation
 )
 
 
-set_source_files_properties(
-    ${GENERATED_DIR}/soapClient.c
-    ${GENERATED_DIR}/soapC.c
-    ${GENERATED_DIR}/soapH.h
-    ${GENERATED_DIR}/soapStub.h
-    ${GENERATED_DIR}/wsdd.h
-    ${GENERATED_DIR}/version.h
-    PROPERTIES GENERATED TRUE
-)
-
-
 
 add_custom_target(generate_version ALL)
 
@@ -191,6 +178,19 @@ add_custom_command(
 )
 
 add_dependencies(${PROJECT_NAME} generate_version)
+
+
+
+set_source_files_properties(
+    ${GENERATED_DIR}/soapClient.c
+    ${GENERATED_DIR}/soapC.c
+    ${GENERATED_DIR}/soapH.h
+    ${GENERATED_DIR}/soapStub.h
+    ${GENERATED_DIR}/wsdd.h
+    ${GENERATED_DIR}/version.h
+    PROPERTIES GENERATED TRUE
+)
+
 
 
 if(USE_SYSTEM_GSOAP OR USE_GSOAP_STATIC_LIB)
